@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <h2>Results</h2>
+    <div class="table-container">
+        <div class="left-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Attribute</th>
+                        <th>Values</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for attribute, _ in results.attribute_values.items() %}
+                    <tr class="{{ _ }}">
+                        <td>{{ attribute }}</td>
+                        <td>{{ _ }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="right-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Prediction</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for model, prediction in results.model_predictions.items() %}
+                    <tr>
+                        <td class="{{ prediction }}">{{ model }}</td>
+                        <td class="{{ prediction }}">{{ prediction }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <br />
+            <br />
+            <div class="prediction-box">
+                <div class="prediction-message">
+                    <p>So, the given website could be classified as <span id="prediction-text">{{ results.prediction
+                            }}</span>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form action="/" method="get">
+        <button class="back-button" type="submit">Back</button>
+    </form>
+    
+
+    <style>
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            font-size: 14px;
+            background-color: #4CAF80;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            background-color: #45a069;
+        }
+    </style>
+</body>
+
+</html>
