@@ -5,6 +5,11 @@ import requests
 import favicon
 import socket
 from bs4 import BeautifulSoup
+import whois
+from datetime import datetime
+import dns.resolver
+import ssl
+
 
 
 def find_ip_address(url):
@@ -50,6 +55,53 @@ def having_subdomain(url):
     elif(no_of_subdomains == 1): return 0
     else: return -1
 
+def check_https_certificate(url):
+    import datetime
+    url = url.replace("https://", "")
+    url = url.replace("www.", "")
+    try:
+        # Create an SSL context
+        context = ssl.create_default_context()
+
+        with context.wrap_socket(socket.socket(), server_hostname=url) as sock:
+            sock.connect((url, 443))
+            cert = sock.getpeercert()
+            issuer = cert["issuer"][1][0][1]
+            expiration_date = cert["notAfter"]
+            current_date = datetime.datetime.now()
+            
+            # Check if the certificate issuer is trusted
+            trusted_issuers = ["GeoTrust", "GoDaddy", "Network Solutions", "Thawte", "Comodo", "Doster", "VeriSign", "DigiCert Inc"]
+            if issuer in trusted_issuers:
+                expiration_date = datetime.datetime.strptime(expiration_date, r'%b %d %H:%M:%S %Y %Z')
+                certificate_age = expiration_date - current_date
+                minimum_certificate_age = datetime.timedelta(days=365)
+                
+                if certificate_age >= minimum_certificate_age:
+                    return 1
+                else:
+                    return -1
+            else:
+                return 0
+                
+    except ssl.SSLError:
+        return -1
+    except socket.error:
+        return -1
+
+def check_domain_expiration(domain):
+    domain_info = whois.whois(domain)
+    if domain_info.expiration_date is not None:
+        current_date = datetime.now().date()
+        expiration_date = domain_info.expiration_date[0].date()
+        time_difference = (expiration_date - current_date).days
+        if time_difference <= 365:
+            return -1
+        else:
+            return 1
+    else:
+        return 0
+
 def is_favicon(url):
     icons = favicon.get(url)
     icon = icons[0]
@@ -71,6 +123,46 @@ def is_port(url):
 def is_https(url):
     return 1 if url.startswith("https") else -1
 
+def calculate_request_url_percentage(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        webpage_content = response.text
+        total_urls = 0
+        external_urls = 0
+        base_domain = urlparse(url).hostname.replace("www.", "").split('.')[0]
+        soup = BeautifulSoup(webpage_content, 'html.parser')
+
+        image_tags = soup.find_all('img')
+        video_tags = soup.find_all('video')
+        audio_tags = soup.find_all('audio')
+        for tag in image_tags:
+            total_urls += 1
+            url = tag.get('src')
+            if url and base_domain not in url:
+                external_urls += 1
+        for tag in video_tags:
+            total_urls += 1
+            url = tag.get('src')
+            if url and base_domain not in url:
+                external_urls += 1
+        for tag in audio_tags:
+            total_urls += 1
+            url = tag.get('src')
+            if url and base_domain not in url:
+                external_urls += 1
+        if total_urls > 0:
+            percentage = (external_urls / total_urls) * 100
+            if percentage < 22:
+                return 1
+            elif 22 <= percentage <= 61:
+                return 0
+            else:
+                return -1
+        else:
+            return 0
+    else:
+        return 0
+
 def anchor_links(url):
     try:
         response = requests.get(url)
@@ -83,6 +175,9 @@ def anchor_links(url):
 
             for tag in anchor_tags:
                 link = tag.get('href')
+                if link.startswith("#"): 
+                    different_site_links.append(link)
+                    continue
                 if link:
                     parsed_link = urlparse(link)
                     link_domain = parsed_link.netloc
@@ -91,7 +186,6 @@ def anchor_links(url):
                     if link_domain != main_domain :
                         different_site_links.append(link_domain)
             a_percentage = len(different_site_links) / len(anchor_tags) * 100
-            print(a_percentage)
             if a_percentage < 31 : return 1
             elif a_percentage >= 31 and a_percentage < 67: return 0 
             else : return -1
@@ -136,10 +230,10 @@ def get_form_url(url):
             soup = BeautifulSoup(response.content, 'html.parser')
             form = soup.find('form')
             form_url = form.get('action') if form else None
+            if form_url.startswith("/") : return 1
             parsed_url = urlparse(url).netloc
             parsed_form_url = urlparse(form_url).netloc
             if not form_url: return -1
-            elif not parsed_form_url: return 1
             elif parsed_form_url != parsed_url: return 0
             else: return 1
     except requests.exceptions.RequestException:
@@ -166,25 +260,172 @@ def check_mailto_links(url):
 
     return []
 
-import pythonwhois
 
-def perform_whois_lookup(domain):
+import requests
+
+def get_redirect_urls(url):
+    redirect_urls = []
+    response = requests.get(url, allow_redirects=True)
+    for redirect in response.history:
+            redirect_urls.append(redirect.url)
+    no_of_redirects = len(redirect_urls)
+    if(no_of_redirects <= 1): return 1
+    elif(no_of_redirects >= 2 and no_of_redirects < 4):
+        return 0
+    else: return -1
+
+def check_status_bar(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    for element in soup.find_all():
+        if element.has_attr('onmouseover'):
+            onmouseover = element['onmouseover']
+            if 'window.status' in onmouseover:
+                return -1 
+
+    return 1
+
+def check_right_click_disabled(url):
+    response = requests.get(url)
+    source_code = response.text
+
+    if "event.button==2" in source_code:
+        return -1 
+
+    return 1
+
+def check_popup_windows(url):
+    response = requests.get(url)
+    html_content = response.text
+    soup = BeautifulSoup(html_content, 'html.parser')
+
+    popups = soup.find_all(attrs={"data-popup": True})
+    for popup in popups:
+        text_fields = popup.select('input[type="text"]')
+        if len(text_fields) > 0:
+            return -1
+
+    return 1
+
+def check_iframe_usage(url):
+    response = requests.get(url)
+    html_content = response.text
+    soup = BeautifulSoup(html_content, 'html.parser')
+    iframes = soup.find_all('iframe')
+
+    if len(iframes) > 0:
+        return -1
+
+    return 1
+
+def check_domain_age(domain):
     try:
-        w = pythonwhois.get_whois(domain)
-        return w
-    except pythonwhois.shared.WhoisException as e:
-        print("Error occurred during WHOIS lookup:", str(e))
-        return None
+        w = whois.whois(domain)
+        creation_date = w.creation_date
+        if isinstance(creation_date, list):
+            creation_date = creation_date[0]
 
-# Example usage
-domain = "example.com"
-result = perform_whois_lookup(domain)
+        current_date = datetime.now()
+        age = (current_date - creation_date).days
 
-if result is not None:
-    print("Domain Name:", result['domain_name'])
-    print("Registrar:", result['registrar'])
-    print("Registrant's Name:", result['contacts']['registrant']['name'])
-    # ... and other relevant WHOIS information
+        if age >= 180: 
+            return 1
+
+    except whois.parser.PywhoisError:
+        pass
+    return -1
+
+def check_dns_records(domain):
+    try:
+        answers = dns.resolver.resolve(domain)
+        if answers:
+            return "Legitimate" 
+
+    except dns.resolver.NXDOMAIN:
+        pass
+
+    return "Phishing"
+
+
+
+def check_google_index(url):
+    google_url = "https://www.google.com/search?q=site:" + url + "&hl=en"
+    response = requests.get(google_url, cookies={"CONSENT": "YES+1"})
+    soup = BeautifulSoup(response.content, "html.parser")
+    not_indexed = re.compile("did not match any documents")
+
+    if soup(text=not_indexed):
+        return -1
+    else:
+        return 1
+
+def url_domain_matches(url1, url2):
+    return get_domain(url1) == get_domain(url2)
+
+def get_domain(url):
+    return url.split("//")[-1].split("/")[0]
+
+def count_links(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    links = soup.find_all("a")
+    
+    external_links = 0
+    for link in links:
+        href = link.get("href")
+        if href.startswith("http") and not url_domain_matches(href, url):
+            external_links += 1
+    
+    if external_links == 0: return -1
+    elif external_links > 0 and external_links <=2 : return 0
+    else: return 1
+
+
+def detect_phishing(url):
+    results = {}
+
+    # Apply the functions and store the results in the dictionary
+    results['having_IPhaving_IP_Address'] = find_ip_address(url)
+    results['URLURL_Length'] = url_length(url)
+    results['Shortining_Service'] = is_shortened(url)
+    results['having_At_Symbol'] = at_symbol(url)
+    results['double_slash_redirecting'] = has_double_slashes(url)
+    results['Prefix_Suffix'] = prefix_suffix(url)
+    results['having_Sub_Domain'] = having_subdomain(url)
+    results['SSLfinal_State'] = check_https_certificate(url)
+    results['Domain_registeration_length'] = check_domain_expiration(get_domain(url))
+    results['Favicon'] = is_favicon(url)
+    results['port'] = is_port(url)
+    results['HTTPS_token'] = is_https(url)
+    results['Request_URL'] = calculate_request_url_percentage(url)
+    results['URL_of_Anchor'] = anchor_links(url)
+    results['Links_in_tags'] = meta_links(url)
+    results['SFH'] = get_form_url(url)
+    results['Submitting_to_email'] = check_mailto_links(url)
+    results['Abnormal_URL'] = get_redirect_urls(url)
+    results['Redirect'] = check_status_bar(url)
+    results['on_mouseover'] = check_right_click_disabled(url)
+    results['RightClick'] = check_popup_windows(url)
+    results['popUpWidnow'] = check_iframe_usage(url)
+    results['Iframe'] = check_iframe_usage(url)
+    results['age_of_domain'] = check_domain_age(get_domain(url))
+    results['DNSRecord'] = check_dns_records(get_domain(url))
+    results['Google_Index'] = check_google_index(url)
+    results['Domain_registeration_length'] = check_domain_expiration(get_domain(url))
+    results['Links_pointing_to_page'] = count_links(url)
+
+    return results
+
+url = "https://www.google.com"
+print(detect_phishing(url))
+
+
+
+
+
+
+
 
 
 
