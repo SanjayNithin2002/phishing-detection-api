@@ -175,7 +175,7 @@ def anchor_links(url):
 
             for tag in anchor_tags:
                 link = tag.get('href')
-                if link.startswith("#"): 
+                if link and link.startswith("#"): 
                     different_site_links.append(link)
                     continue
                 if link:
@@ -323,6 +323,7 @@ def check_domain_age(domain):
     try:
         w = whois.whois(domain)
         creation_date = w.creation_date
+        if not creation_date: return -1
         if isinstance(creation_date, list):
             creation_date = creation_date[0]
 
@@ -374,7 +375,7 @@ def count_links(url):
     external_links = 0
     for link in links:
         href = link.get("href")
-        if href.startswith("http") and not url_domain_matches(href, url):
+        if href and href.startswith("http") and not url_domain_matches(href, url):
             external_links += 1
     
     if external_links == 0: return -1
@@ -417,7 +418,7 @@ def detect_phishing(url):
 
     return results
 
-url = "https://www.google.com"
+url = "https://www.tennis-station.jp/wp-content/whidget/8d0009188f612dc3d/pass/"
 print(detect_phishing(url))
 
 
