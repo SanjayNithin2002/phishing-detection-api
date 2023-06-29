@@ -63,6 +63,11 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        #github-repository {
+            text-align: center;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -72,9 +77,17 @@
         <input type="submit" value="Submit" style="margin-top: 10px;">
         <div class="loader" id="loader"></div>
     </form>
+    <div id="github-repository">
+        <h3>Github Repository</h3>
+        <a href="https://github.com/SanjayNithin2002/phishing-detection-api">
+            <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub" width="32" height="32">
+        </a>
+    </div>
     <script>
-        // Hide the loader initially
-        document.getElementById("loader").style.display = "none";
+        // Hide the loader on page load
+        window.addEventListener("load", function() {
+            document.getElementById("loader").style.display = "none";
+        });
         
         // Show the loader when the form is submitted
         document.querySelector("form").addEventListener("submit", function() {
