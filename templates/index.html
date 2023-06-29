@@ -1,98 +1,40 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Phishing Website Detection</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #80CBC4;
-            padding: 20px;
-        }
-        
-        h2 {
-            text-align: center;
-        }
-        
-        form {
-            max-width: 400px;
-            margin: 0 auto;
-            background-color: #E0F7FA;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        
-        input[type="submit"] {
-            background-color: #4CAF80;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        input[type="submit"]:hover {
-            background-color: #45a069;
-        }
-        
-        .loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            align-self: center;
-            margin-top: 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        #github-repository {
-            text-align: center;
-            margin-top: 20px;
-        }
-    </style>
+    <title>Phishing Website Detection</title> 
+           <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}"> 
 </head>
+
 <body>
-    <h2>Phishing Website Detection</h2>
-    <form method="POST" action="/">
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="/about">About</a></li>
+        </ul>
+    </nav><br />
+    <br />
+    <div class="topic">Phishing Detection</div>
+    <br />
+    <br />
+    <form method="POST" action="/" style="margin: 0 auto;">
         <input type="text" name="input_url" placeholder="Enter a URL" style="margin: 5px 0;">
+        <br />
         <input type="submit" value="Submit" style="margin-top: 10px;">
         <div class="loader" id="loader"></div>
     </form>
-    <div id="github-repository">
-        <h3>Github Repository</h3>
-        <a href="https://github.com/SanjayNithin2002/phishing-detection-api">
-            <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub" width="32" height="32">
-        </a>
-    </div>
+
     <script>
         // Hide the loader on page load
-        window.addEventListener("load", function() {
+        window.addEventListener("load", function () {
             document.getElementById("loader").style.display = "none";
         });
-        
+
         // Show the loader when the form is submitted
-        document.querySelector("form").addEventListener("submit", function() {
+        document.querySelector("form").addEventListener("submit", function () {
             document.getElementById("loader").style.display = "block";
         });
     </script>
 </body>
+
 </html>

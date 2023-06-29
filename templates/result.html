@@ -7,7 +7,16 @@
 </head>
 
 <body>
-    <h2>Results</h2>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+
+        </ul>
+    </nav>
+    <div class="topic">Results</div>
+    <br />
+    <br />
     <div class="table-container">
         <div class="left-section">
             <table>
@@ -19,9 +28,9 @@
                 </thead>
                 <tbody>
                     {% for attribute, _ in results.attribute_values.items() %}
-                    <tr class="{{ _ }}">
+                    <tr>
                         <td>{{ attribute }}</td>
-                        <td>{{ _ }}</td>
+                        <td class="{{ _ }}">{{ _ }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -38,7 +47,7 @@
                 <tbody>
                     {% for model, prediction in results.model_predictions.items() %}
                     <tr>
-                        <td class="{{ prediction }}">{{ model }}</td>
+                        <td>{{ model }}</td>
                         <td class="{{ prediction }}">{{ prediction }}</td>
                     </tr>
                     {% endfor %}
@@ -48,46 +57,16 @@
             <br />
             <div class="prediction-box">
                 <div class="prediction-message">
-                    <p>So, the given website could be classified as <span id="prediction-text">{{ results.prediction
+                    <p>So, the given website could be classified as <span class="{{results.prediction}}">{{ results.prediction
                             }}</span>.</p>
                 </div>
             </div>
         </div>
     </div>
-    <form action="/" method="get">
-        <button class="back-button" type="submit">Back</button>
+    <form action="/" method="GET" style="margin: 0 auto;">
+        <input type="submit" value="Go Back" style="margin-top: 10px;">
     </form>
 
-    <div id="github-contribution">
-        <h3>Github Repository</h3>
-        <a href="https://github.com/SanjayNithin2002/phishing-detection-api">
-            <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub" width="32" height="32">
-        </a>
-    </div>
-
-    <style>
-        .back-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            font-size: 14px;
-            background-color: #4CAF80;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .back-button:hover {
-            background-color: #45a069;
-        }
-
-        #github-contribution {
-            margin-top: 20px;
-            text-align: center;
-        }
-    </style>
 </body>
 
 </html>

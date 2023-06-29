@@ -1,0 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* Reset default margin and padding */
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+li {
+    margin: 0;
+    padding: 0;
+}
+
+/* Set a modern font */
+body {
+    font-family: 'Montserrat', Arial, sans-serif;
+}
+
+/* Set a modern color palette */
+:root {
+    --primary-color: #150f38;
+    --secondary-color: #1c1d54;
+    --background-color: #26236b;
+    --text-color: #D6D6D6;
+}
+
+/* Apply modern color scheme */
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-size: 16px;
+}
+
+p {
+    font-size: 25px;
+}
+
+nav {
+    background-color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+nav li {
+    display: inline-block;
+    margin: 0 10px;
+}
+
+nav li a {
+    display: block;
+    color: #fff;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+nav li a:hover {
+    background-color: var(--secondary-color);
+}
+
+.topic {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 36px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+form {
+    max-width: 600px;
+    height: 150px;
+    margin: 0 auto;
+    background-color: #150f38;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    color: var(--text-color);
+}
+
+input[type="text"]:focus {
+    outline: none;
+}
+
+
+input[type="text"],
+input[type="submit"] {
+    background-color: var(--background-color);
+    border: none;
+    border-radius: 3px;
+}
+
+input[type="text"] {
+    padding: 12px;
+    width: 90%;
+    color: var(--text-color);
+}
+
+input[type="submit"] {
+    padding: 12px 20px;
+    color: var(--text-color);
+    background-color: #1c1d54;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #151345;
+    /* Updated hover button color */
+}
+
+.loader {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid var(--primary-color);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    box-sizing: border-box;
+    padding: 5px;
+}
+
+input[type="text"]:-webkit-autofill {
+    -webkit-text-fill-color: var(--text-color);
+    -webkit-box-shadow: 0 0 0 30px var(--background-color) inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.about {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 50vh;
+    text-align: justify;
+}
+.about p {
+    padding: 20px;
+    width: 50%;
+    text-align: justify;
+    font-size: 22px;
+    background-color: var(--primary-color);
+    border-radius: 20px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 3);
+    line-height: 1.5;
+}
+
+.about p a{
+    color : var(--background-color);
+}
+
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

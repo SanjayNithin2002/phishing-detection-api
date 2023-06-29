@@ -1,20 +1,104 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #80CBC4;
-    padding: 20px;
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+li {
+    margin: 0;
+    padding: 0;
 }
 
-h1, h2 {
-    text-align: center;
+:root {
+    --primary-color: #150f38;
+    --secondary-color: #1c1d54;
+    --background-color: #26236b;
+    --text-color: #D6D6D6;
 }
+
+body {
+    font-family: 'Montserrat', Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-size: 16px;
+}
+
+nav {
+    background-color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+nav li {
+    display: inline-block;
+    margin: 0 10px;
+}
+
+nav li a {
+    display: block;
+    color: #fff;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+nav li a:hover {
+    background-color: var(--secondary-color);
+}
+
+.topic {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 36px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+input[type="submit"] {
+    background-color: var(--background-color);
+    border: none;
+    border-radius: 3px;
+    padding: 12px 20px;
+    color: var(--text-color);
+    background-color: #1c1d54;
+    cursor: pointer;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    font-size: 14px;
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #151345;
+    /* Updated hover button color */
+}
+
 
 .table-container {
     display: flex;
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
     overflow: hidden;
-    background-color: #E0F7FA;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    background-color: var(--primary-color);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 1);
     border-radius: 10px;
 }
 
@@ -23,18 +107,27 @@ h1, h2 {
     table-layout: fixed;
     border-collapse: collapse;
     border-radius: 5px;
+    
 }
 
 .table-container th,
 .table-container td {
     padding: 10px;
     text-align: left;
-    border: 1px solid #ddd;
     font-size: 14px;
 }
 
 .table-container th {
-    background-color: #f5f5f5;
+    background-color: var(--secondary-color);
+}
+
+
+.container::-webkit-scrollbar-thumb {
+    background-color: var(--secondary-color);
+}
+
+.container::-webkit-scrollbar-track {
+    background-color: var(--secondary-color);
 }
 
 .table-container .left-section {
@@ -53,59 +146,51 @@ h1, h2 {
     margin-bottom: 0;
 }
 
-.table-container .right-section thead tr {
-    background-color: #f5f5f5;
-}
-
-.table-container .right-section tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
 .table-container .right-section tbody tr:hover {
     background-color: #ebebeb;
+    color: #000;
+}
+.table-container td.Legitimate,
+tr.Legitimate {
+    background-color: var(--primary-color);
+    color: #C8E6C9;
 }
 
-.table-container td.Legitimate {
-    background-color: #C8E6C9;
+.table-container td.Phishing,
+tr.Phishing {
+    background-color: var(--primary-color);
+    color: #FFCDD2;
 }
 
-.table-container td.Phishing {
-    background-color: #FFCDD2;
-}
-
-.table-container td.Suspicious {
-    background-color: #FFE0B2;
-}
-
-.table-container tr.Legitimate {
-    background-color: #C8E6C9;
-}
-
-.table-container tr.Phishing {
-    background-color: #FFCDD2;
-}
-
-.table-container  tr.Suspicious {
-    background-color: #FFE0B2;
+.table-container td.Suspicious,
+tr.Suspicious {
+    background-color: var(--primary-color);
+    color: #FFE0B2;
 }
 
 /* Add styling for the prediction message */
 .prediction-message {
     margin: 20px;
-  }
-  
-  .prediction-message p {
+}
+
+.prediction-message p {
     font-size: 18px;
     font-weight: 500px;
-  }
-  
-  .prediction-box {
-    background-color: #E0F7FA;
+}
+
+.prediction-box {
     padding: 20px;
     margin: 20px;
-  }
-  
-  
-  .prediction-message span {
-    color: green;
-  }
+}
+
+.prediction-message span.Legitimate {
+    color: #C8E6C9;
+}
+
+.prediction-message span.Phishing {
+    color: #FFCDD2;
+}
+
+.prediction-message span.Suspicious {
+    color: #FFE0B2;
+}
